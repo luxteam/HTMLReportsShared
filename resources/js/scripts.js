@@ -1,11 +1,11 @@
 
-$.extend($.expr[':'], {
-  'containsCI': function(elem, i, match, array)
-  {
-    return (elem.textContent || elem.innerText || '').toLowerCase()
-    .indexOf((match[3] || "").toLowerCase()) >= 0;
-  }
-});
+//$.extend($.expr[':'], {
+//  'containsCI': function(elem, i, match, array)
+//  {
+//    return (elem.textContent || elem.innerText || '').toLowerCase()
+//    .indexOf((match[3] || "").toLowerCase()) >= 0;
+//  }
+//});
 
 function openModalWindow(id) {
     var modal = document.getElementById(id);

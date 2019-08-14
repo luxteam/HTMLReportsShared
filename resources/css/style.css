@@ -165,9 +165,6 @@ a {
      );
 }
 
-.detailedTable img {
-  width: 13vw;
-}
 .jsTableWrapper {
   width: 90% !important;
   margin: auto;
@@ -294,6 +291,11 @@ a {
     margin: 1vw 0px 0px 1vw;
     left: 0;
     top: 0;
+}
+
+form.popupForm output {
+    font-size: 18px;
+    text-shadow: 2px 3px 5px #6d6d6d;
 }
 
 .hAnchor {

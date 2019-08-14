@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="report_resources/css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="report_resources/css/bootstrap-table.css"/>
 
-    <script src="report_resources/js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="report_resources/js/jquery-3.4.1.min.js" type="text/javascript"></script>
     <script src="report_resources/js/pixelmatch.js"></script>
     <script src="report_resources/js/bootstrap.js" type="text/javascript"></script>
     <script src="report_resources/js/bootstrap-table.js" type="text/javascript"></script>
@@ -24,11 +24,13 @@
     <a name="#top"/>
     <a id="goTop" href="#top" title="Go top"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true" aria-label="Go top"></span></a>
 
+    <div id="infoBox"></div>
+
     <div id="header">
         <img src="report_resources/img/logo.png"/>
     </div>
 
-    <h1>{{ machine_name | env_override("USERDOMAIN") | lower }}</h1>
+    <h1>{{ machine_name | env_override("STAGE_NAME") | lower }}</h1>
 
     <div class="jsTableWrapper">
         <table id="mainTable"
@@ -39,17 +41,17 @@
                data-show-toggle="false"
                data-show-columns="true"
                data-show-pagination-switch="true"
-               data-pagination="true"
-               data-page-size="10"
+               data-pagination="false"
+               data-page-size="ALL"
                data-page-list="[1, 5, 10, 20, 45, ALL]"
                data-sort-order="asc"
                data-sort-name="test_case">
             <thead>
                 <tr>
-                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false">Test case</th>
-                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName">
+                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false" width="10px">Test case</th>
+                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName" width="100px">
                         Test name
-                        <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true"data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
+                        <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
                     </th>
                     <th data-field="ref_img" data-halign="center" data-valign="center" data-sortable="true" data-formatter="metaAJAX">Reference image</th>
                     <th data-field="out_img" data-halign="center" data-valign="center" data-sortable="true" data-formatter="metaAJAX">Output image</th>
@@ -58,20 +60,24 @@
             </thead>
             <tbody>
                 {% for case in cases_list %}
-                <tr>
+                <tr onload="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', '', 0.03);">
                     <td>{{ case }}</td>
                     <td><button class="commonButton" type="button" name="copyDirectLinkButton">{{ case }}</button></td>
-                    <td class="hatching"><img id="Ref{{ loop.index }}" data-src="ReferenceImages/{{ case }}"/></td>
-                    <td class="hatching"><img id="Out{{ loop.index }}" data-src="OutputImages/{{ case }}"/></td>
-                    <td class="hatching">
-                        <canvas id="Diff{{ loop.index }}" class="imgsDifferenceCanvas"></canvas>
+                    <td class="hatching" id="TRef{{ loop.index }}"><img id="Ref{{ loop.index }}" data-src="ReferenceImages/{{ case }}"/></td>
+                    <td class="hatching" id="TOut{{ loop.index }}"><img id="Out{{ loop.index }}" data-src="OutputImages/{{ case }}"/></td>
+                    <td class="hatching" id="TDiff{{ loop.index }}">
+                        <canvas id="Diff{{ loop.index }}"></canvas>
 
                         <form class="popupForm" oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
                             <input  autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.03"
                                     oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 'thresholdRange{{ loop.index }}', this.value);"/>
                             <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.03</output>
                         </form>
-
+                        <script>
+                            jQuery(document).ready( function() {
+                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', '', 0.03);
+                            });
+                        </script>
                     </td>
                 </tr>
                 {% endfor %}
