@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--xml_path', required=True)
     parser.add_argument('--images_basedir', required=True)
     parser.add_argument('--report_path', default=os.path.join(os.path.dirname(__file__), 'FailuresReport'))
+    parser.add_argument('--report_name', default='report.html')
 
     args = parser.parse_args()
 
@@ -45,6 +46,10 @@ def main():
                 try:
                     copyfile(os.path.join(args.images_basedir, ref_dir, img_name),
                              os.path.join(args.report_path, ref_dir, img_name))
+                except OSError as err:
+                    print(str(err))
+                    print(img_name)
+                try:
                     copyfile(os.path.join(args.images_basedir, out_dir, img_name),
                              os.path.join(args.report_path, out_dir, img_name))
                 except OSError as err:
@@ -61,7 +66,7 @@ def main():
     html_result = template.render(title="Title",
                                   cases_list=cases_list)
 
-    with open(os.path.join(args.report_path, 'report.html'), 'w') as html_file:
+    with open(os.path.join(args.report_path, args.report_name), 'w') as html_file:
         html_file.write(html_result)
 
     copytree("resources", os.path.join(args.report_path, "report_resources"))
