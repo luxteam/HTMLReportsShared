@@ -42,19 +42,19 @@ def main():
         for case in suite:
             if case.result:
                 img_name = case.result.message.splitlines()[-1]
-                cases_list.append(img_name)
-                try:
-                    copyfile(os.path.join(args.images_basedir, ref_dir, img_name),
-                             os.path.join(args.report_path, ref_dir, img_name))
-                except OSError as err:
-                    print(str(err))
-                    print(img_name)
-                try:
-                    copyfile(os.path.join(args.images_basedir, out_dir, img_name),
-                             os.path.join(args.report_path, out_dir, img_name))
-                except OSError as err:
-                    print(str(err))
-                    print(img_name)
+
+                if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
+                    cases_list.append(case + img_name)
+                else:
+                    cases_list.append(img_name)
+                    try:
+                        copyfile(os.path.join(args.images_basedir, ref_dir, img_name),
+                                 os.path.join(args.report_path, ref_dir, img_name))
+                        copyfile(os.path.join(args.images_basedir, out_dir, img_name),
+                                 os.path.join(args.report_path, out_dir, img_name))
+                    except OSError as err:
+                        print(str(err))
+                        print(img_name)
 
     env = jinja2.Environment(
         loader=jinja2.PackageLoader('hybrid_report', 'templates'),

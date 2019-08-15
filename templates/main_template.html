@@ -28,9 +28,16 @@
 
     <div id="header">
         <img src="report_resources/img/logo.png"/>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-default">1</button>
+          <button type="button" class="btn btn-default">2</button>
+          <button type="button" class="btn btn-default">2</button>
+        </div>
     </div>
 
-    <h1>{{ machine_name | env_override("STAGE_NAME") | lower }}</h1>
+    <h1>{{ machine_name | env_override("STAGE_NAME") }}</h1>
+    <h1>{{ machine_name | env_override("JOB_NAME") }}</h1>
 
     <div class="jsTableWrapper">
         <table id="mainTable"
@@ -60,7 +67,7 @@
             </thead>
             <tbody>
                 {% for case in cases_list %}
-                <tr onload="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', '', 0.03);">
+                <tr>
                     <td>{{ case }}</td>
                     <td><button class="commonButton" type="button" name="copyDirectLinkButton">{{ case }}</button></td>
                     <td class="hatching" id="TRef{{ loop.index }}"><img id="Ref{{ loop.index }}" data-src="ReferenceImages/{{ case }}"/></td>
@@ -70,13 +77,13 @@
 
                         <form class="popupForm" oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
                             <input  autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.03"
-                                    oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 'thresholdRange{{ loop.index }}', this.value);"/>
+                                    oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', this.value);"/>
                             <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.03</output>
                         </form>
                         <script>
-                            jQuery(document).ready( function() {
-                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', '', 0.03);
-                            });
+                            window.setTimeout( function(){
+                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.03);
+                            }, 1000);
                         </script>
                     </td>
                 </tr>

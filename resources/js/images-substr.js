@@ -1,5 +1,5 @@
-function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdRangeId, thresholdValue) {
-//    document.getElementById(thresholdRangeId).setAttribute("value", thresholdValue);
+function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
+
     var diffCanvas = document.getElementById(diffCanvasId);
 
     var img1 = document.getElementById(baselineId);
@@ -20,5 +20,3 @@ function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdRangeId, 
     pixelmatch(imgData1.data, imgData2.data, diff.data, diffCanvas.width, diffCanvas.height, {threshold: thresholdValue});
     ctx.putImageData(diff, 0, 0);
 }
-
-//TODO: init function which will wait till images will be loaded then - autoload
