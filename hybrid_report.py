@@ -44,7 +44,7 @@ def main():
                 img_name = case.result.message.splitlines()[-1]
 
                 if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
-                    cases_list.append(case + img_name)
+                    cases_list.append(case.name + img_name)
                 else:
                     cases_list.append(img_name)
                     try:
