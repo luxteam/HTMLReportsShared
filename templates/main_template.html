@@ -43,7 +43,7 @@
                data-show-columns="true"
                data-show-pagination-switch="true"
                data-pagination="false"
-               data-page-size="ALL"
+               data-page-size="5"
                data-page-list="[1, 5, 10, 20, 45, ALL]"
                data-sort-order="asc"
                data-sort-name="test_case">
@@ -70,13 +70,13 @@
                         <canvas id="Diff{{ loop.index }}"></canvas>
 
                         <form class="popupForm" oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
-                            <input  autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.03"
+                            <input  autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.0"
                                     oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', this.value);"/>
-                            <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.03</output>
+                            <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.0</output>
                         </form>
                         <script>
                             window.setTimeout( function(){
-                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.03);
+                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.0);
                             }, 1000);
                         </script>
                     </td>
