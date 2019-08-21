@@ -76,8 +76,8 @@
                         </form>
                         <script>
                             window.setTimeout( function(){
-                                renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.0);
-                            }, 1000);
+                                waitImgLoadAndRenderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.0);
+                            }, 100* {{ loop.index }} );
                         </script>
                     </td>
                 </tr>
