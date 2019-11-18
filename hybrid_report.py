@@ -47,14 +47,15 @@ def main():
                     cases_list.append(case.name + img_name)
                 else:
                     cases_list.append(img_name)
-                    try:
-                        copyfile(os.path.join(args.images_basedir, ref_dir, img_name),
-                                 os.path.join(args.report_path, ref_dir, img_name))
-                        copyfile(os.path.join(args.images_basedir, out_dir, img_name),
-                                 os.path.join(args.report_path, out_dir, img_name))
-                    except OSError as err:
-                        print(str(err))
-                        print(img_name)
+                    for target_dir in [ref_dir, out_dir]:
+                        source_img_path = os.path.join(args.images_basedir, target_dir, img_name)
+                        report_img_path = os.path.join(args.report_path, target_dir, img_name)
+                        if os.path.exists(source_img_path):
+                            try:
+                                copyfile(source_img_path, report_img_path)
+                            except OSError as err:
+                                print(str(err))
+                                print(img_name)
 
     env = jinja2.Environment(
         loader=jinja2.PackageLoader('hybrid_report', 'templates'),
