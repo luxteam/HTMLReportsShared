@@ -96,7 +96,7 @@
 
     <div class="jsTableWrapper">
         <table id="mainTable"
-               class="baseTable detailedTable table table-striped table-hover"
+               class="detailedTable table table-striped table-hover"
                data-toggle="table"
                data-search="true"
                data-show-refresh="true"
@@ -110,8 +110,8 @@
                data-sort-name="test_case">
             <thead>
                 <tr>
-                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false" width="10px">Test case</th>
-                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName" width="100px">
+                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false" data-width="200">Test case</th>
+                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName" data-width="300">
                         Test name
                         <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
                     </th>
@@ -125,7 +125,7 @@
                 <tr>
                     <td>{{ case }}</td>
                     <td>
-                        <button class="btn btn-default" type="button" name="copyDirectLinkButton">{{ case }}</button>
+                        <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 200px; white-space: break-spaces; overflow-wrap: break-word;">{{ case }}</button>
                     </td>
                     <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case }}"/></td>
                     <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case }}"/></td>
