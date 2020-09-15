@@ -1,14 +1,56 @@
-jQuery(document).ready( function() {
-    var searchText = getQueryVariable('searchText');
-    if (searchText) {
-        $('.jsTableWrapper [id]').bootstrapTable('resetSearch', searchText);
+window.onload = function WindowLoad(event) {
+    var tables = $('.twoSetupTimes')
+    Array.prototype.forEach.call(tables, function(table) {
+        $('#' + table.id).on('column-switch.bs.table', function () {
+            hiddenColumns = $('#' + table.id).bootstrapTable('getHiddenColumns').map(function (it) {return it.field}) // get string with hidden columns
+            if (JSON.stringify(hiddenColumns).indexOf('setupTime') < 0){ // if setup time column is shown
+                $(this).bootstrapTable('showColumn', 'fullTimeTaken')
+                $(this).bootstrapTable('hideColumn', 'syncTimeTaken')
+            }else{
+                $(this).bootstrapTable('hideColumn', 'fullTimeTaken')
+                $(this).bootstrapTable('showColumn', 'syncTimeTaken')
+            }
+        })
+    })
+}
+
+/**
+ * Function for sorting test results by status. Uses 'data-sorter' attribute by bootstrap tables.
+ * Case statuses (from highest to lowest sort priority):
+ * - error - crash during test execution
+ * - failed - pixel/time/ram diff too large
+ * - passed - case executed without crushes; acceptable diff
+ * - skipped - case wasn't launched
+ */
+function statusSorter(x, y) {
+    var a = x.toLowerCase();
+    var b = y.toLowerCase();
+
+    if (a === b) return 0;
+
+    if (a.includes('error')) {
+        return -1;
     }
-});
+
+    if (a.includes('failed') && !b.includes('error')) {
+        return -1;
+    }
+
+    if (a.includes('passed') && !b.includes('failed') && !b.includes('error')) {
+        return -1;
+    }
+
+    return 1;
+}
 
 window.openFullImgSize = {
     'click img': function(e, value, row, index) {
         var renderImg = document.getElementById('renderedImgPopup');
         var baselineImg = document.getElementById('baselineImgPopup');
+
+        document.getElementById('pairComparisonDiv').style.display = "";
+        document.getElementsByName('increaseImgSizeButton')[0].disabled = false;
+        document.getElementsByName('reduceImgSizeButton')[0].disabled = false;
 
         renderImg.src = "";
         baselineImg.src = "";
@@ -28,6 +70,9 @@ window.openFullImgSize = {
 
         document.getElementById("imgsCompareTable").style.display = "";
         document.getElementById("imgsDiffTable").style.display = "none";
+        document.getElementById('imgsDiffTable').is_reshalla = undefined;
+        document.getElementById('thresholdRange').style.display = "none";
+        document.getElementById('thresholdView').style.display = "none";
 
         openModalWindow('imgsModal');
     }
@@ -63,8 +108,48 @@ window.copyTestCaseName = {
     }
 }
 
-function timeFormatter(value, row, index, field) {
-    var time = new Date(null);
-    time.setSeconds(value);
-    return time.toISOString().substr(11, 8);
+function performanceNormalizeFormatter(value, row, index, field) {
+    for (key in row) {
+        if (isFinite(parseFloat((value * 100 / row[key]).toFixed(2)))) {
+            return (value * 100 / row[key]).toFixed(2) + " %"
+        }
+    }
+    return "Skipped"
+}
+
+function performanceNormalizeStyleFormatter(value, row, index, field) {
+    var values = [];
+    for (key in row) {
+        if (key != 0 && !isNaN(parseInt(key))) {
+            if (isFinite(parseFloat(row[key]))) {values.push(parseFloat(row[key]))}
+        }
+    }
+
+    var opacity = parseFloat(value) === 0.0 ? 0 : 1;
+    var min = Math.min.apply(Math, values),
+    ratio = (Math.max.apply(Math, values) - min) / 100;
+
+    value = Math.round((value - min) / ratio);
+
+    return {
+        classes: "",
+        css: {"background-color": getGreenToRed(value, opacity)}
+    };
+}
+
+function getGreenToRed(percent, opacity){
+    rmax = 209;
+    rmin = 128;
+    gmax = 209;
+    gmin = 117;
+    bmax = 155;
+    bmin = 85;
+    r = Math.floor((rmax - rmin) * percent / 100 + rmin);
+    g = Math.floor((gmax - gmin) * (100 - percent) / 100 + gmin);
+    b = Math.floor((bmax - bmin) * (100 - percent) / 100 + bmin);
+    return 'rgb(' + r + ',' + g + ',' + b + ',' + opacity + ')';
+}
+
+function searchTextInBootstrapTable(status) {
+    $('.jsTableWrapper [id]').bootstrapTable('resetSearch', status);
 }
