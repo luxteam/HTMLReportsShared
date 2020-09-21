@@ -3,6 +3,7 @@ function showImagesSubtraction(baselineId, renderId, reshalla) {
         infoBox("[Error] Can't read source image.", "#9b5e61");
         return;
     }
+
     document.getElementById('pairComparisonDiv').style.display = "";
     document.getElementsByName('increaseImgSizeButton')[0].disabled = false;
     document.getElementsByName('reduceImgSizeButton')[0].disabled = false;
@@ -31,7 +32,7 @@ function showImagesSubtraction(baselineId, renderId, reshalla) {
     else {
         thresholdRange.style.display = "";
         thresholdView.style.display = "";
-        renderCanvasData(baselineId, renderId, parseFloat(document.getElementById("thresholdRange").getAttribute('value')));
+        renderCanvasData(baselineId, renderId,'imgsDifferenceCanvas', parseFloat(document.getElementById("thresholdRange").getAttribute('value')));
     }
 
     imagesTable.style.display = "none";
@@ -39,9 +40,9 @@ function showImagesSubtraction(baselineId, renderId, reshalla) {
     diffTable.is_reshalla = reshalla;
 }
 
-function renderCanvasData(baselineId, renderId, thresholdValue) {
+function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
     document.getElementById('thresholdRange').setAttribute("value", thresholdValue);
-    var diffCanvas = document.getElementById('imgsDifferenceCanvas');
+    var diffCanvas = document.getElementById(diffCanvasId);
 
     var img1 = document.getElementById(baselineId);
     var img2 = document.getElementById(renderId);
@@ -131,4 +132,26 @@ function showCarousel(baselineId, renderId) {
         setTimeout(function(){showImg.src = renderImg.src;}, 300);
         setTimeout(function(){showImg.src = baselineImg.src;}, 600);
     }, 1200);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitImgLoadAndRenderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
+    var loaded = false;
+    var i = 0;
+    while(i < 1000) {
+        console.log(document.getElementById(baselineId).complete && document.getElementById(renderId).complete);
+        if (document.getElementById(baselineId).complete && document.getElementById(renderId).complete) {
+            console.log("Imgs loaded");
+            renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue);
+            return;
+        }
+        else {
+            i++;
+            await sleep(1000);
+            console.log("Imgs not loaded");
+        }
+    }
 }
