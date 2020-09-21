@@ -183,27 +183,7 @@ a {
   width: 100%;
 }
 
-.popup {
-  display: none;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-}
-.popupContent {
-  margin: auto;
-  padding: 5px;
-}
-.popupHalfWidth {|
-  width: 50%;
-}
+
 
 .closePopup img{
     width: 1vw;
@@ -288,6 +268,28 @@ a {
     background-color: #a6a6a6;
 }
 
+.popup {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+.popupContent {
+  margin: auto;
+  padding: 5px;
+}
+.popupHalfWidth {|
+  width: 50%;
+}
+
 .popupButton {
     border-radius: 9px;
     border: 0.8px solid #999999;
@@ -299,7 +301,7 @@ a {
 }
 
 #imgsCompareTable img {
-    max-width: 50vw;
+    max-width: 45vw;
     max-height: 80vh;
     width: 30vw;
     height: auto;
@@ -308,7 +310,7 @@ a {
 #imgsDifferenceCanvas {
     display: block;
     margin: auto;
-    max-width: 90vw;
+    max-width: 50vw;
     max-height: 80vh;
     width: 60vw;
     height: auto;
@@ -353,4 +355,11 @@ a {
   width: auto;
   display: block;
   margin: auto;
+}
+
+#imgsCompareTable img {
+    max-width: 50vw;
+    max-height: 80vh;
+    width: 30vw;
+    height: auto;
 }
