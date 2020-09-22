@@ -65,18 +65,23 @@ function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
 
 function renderCanvasReshalla(baselineId, renderId) {
     var diffCanvas = document.getElementById('imgsDifferenceCanvas');
+    var imagesTable = document.getElementById("imgsCompareTable");
+
+    imagesTable.style.display = "block";
 
     var baselineImg = document.getElementById(baselineId);
     var renderedImg = document.getElementById(renderId);
 
-    diffCanvas.width = baselineImg.naturalWidth;
-    diffCanvas.height = baselineImg.naturalHeight;
     var ctx = diffCanvas.getContext("2d");
     ctx.clearRect(0, 0, diffCanvas.width, diffCanvas.height);
+    diffCanvas.width = 1;
+    diffCanvas.width = baselineImg.naturalWidth;
+    diffCanvas.height = baselineImg.naturalHeight;
 
     var renderImgData = cv.imread(renderedImg);
     var baselineImgData = cv.imread(baselineImg);
 
+    imagesTable.style.display = "none";
     var renderImgDataProc = new cv.Mat();
     var baselineImgDataProc = new cv.Mat();
 
