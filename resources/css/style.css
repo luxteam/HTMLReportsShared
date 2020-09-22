@@ -85,7 +85,7 @@ table.baseTable {
   width: 90%;
   margin-right: auto;
   margin-left: auto;
-}
+}/*
 .baseTable tr, td {
   width: auto;
   padding: 5px;
@@ -98,7 +98,7 @@ table.baseTable {
   padding: 10px;
   border: 1px solid black;
   text-align: center;
-}
+}*/
 
 hr {
   height: 5px;
@@ -178,6 +178,7 @@ a {
 .jsTableWrapper {
   width: 90% !important;
   margin: auto;
+  margin-bottom: 15px;
 }
 .jsTableWrapper table {
   width: 100%;

@@ -69,6 +69,11 @@ function renderCanvasReshalla(baselineId, renderId) {
     var baselineImg = document.getElementById(baselineId);
     var renderedImg = document.getElementById(renderId);
 
+    diffCanvas.width = baselineImg.naturalWidth;
+    diffCanvas.height = baselineImg.naturalHeight;
+    var ctx = diffCanvas.getContext("2d");
+    ctx.clearRect(0, 0, diffCanvas.width, diffCanvas.height);
+
     var renderImgData = cv.imread(renderedImg);
     var baselineImgData = cv.imread(baselineImg);
 
