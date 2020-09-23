@@ -35,8 +35,8 @@ function increaseImgSize() {
     var imagesSelectorList = [['#imgsDifferenceCanvas', step * 4], ['#renderedImgPopup', step], ['#baselineImgPopup', step]];
 
     imagesSelectorList.forEach(function(item) {
-        $(item[0]).css("width", function( index, value ) {
-	        return parseInt(value, 10) + document.documentElement.clientWidth / 100 * item[1];
+        $(item[0]).css("height", function( index, value ) {
+	        return parseInt(value, 10) + document.documentElement.clientHeight / 100 * item[1];
         });
     });
 }
@@ -46,8 +46,8 @@ function reduceImgSize() {
     var imagesSelectorList = [['#imgsDifferenceCanvas', step * 4], ['#renderedImgPopup', step], ['#baselineImgPopup', step]];
 
     imagesSelectorList.forEach(function(item) {
-        $(item[0]).css("width", function( index, value ) {
-	        return parseInt(value, 10) - document.documentElement.clientWidth / 100 * item[1];
+        $(item[0]).css("height", function( index, value ) {
+	        return parseInt(value, 10) - document.documentElement.clientHeight / 100 * item[1];
         });
     });
 }

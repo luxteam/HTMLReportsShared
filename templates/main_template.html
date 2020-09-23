@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="report_resources/css/style.css"/>
-
     <link rel="stylesheet" type="text/css" href="report_resources/css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="report_resources/css/bootstrap-table.css"/>
+    <link rel="stylesheet" type="text/css" href="report_resources/css/bootstrap.Flaty.min.css"/>
+    <link rel="stylesheet" type="text/css" href="report_resources/css/style.css"/>
 
     <script src="report_resources/js/jquery-3.4.1.min.js" type="text/javascript"></script>
-    <script src="report_resources/js/pixelmatch.js"></script>
     <script src="report_resources/js/bootstrap.js" type="text/javascript"></script>
     <script src="report_resources/js/bootstrap-table.js" type="text/javascript"></script>
     <script src="report_resources/js/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+    <script src="report_resources/js/bootstrap-table-custom.js"></script>
+    <script src="report_resources/js/opencv.js"></script>
 
+    <script src="report_resources/js/pixelmatch.js"></script>
     <script src="report_resources/js/scripts.js" type="text/javascript"></script>
     <script src="report_resources/js/images-substr.js"></script>
-    <script src="report_resources/js/bootstrap-table-custom.js"></script>
 
     <title>{{ title | env_override("STAGE_NAME") }}</title>
 </head>
@@ -26,16 +27,78 @@
 
     <div id="infoBox"></div>
 
-    <div id="header">
+    <div class="page-header">
         <img src="report_resources/img/logo.png"/>
     </div>
 
-    <h1>{{ machine_name | env_override("STAGE_NAME") }}</h1>
-    <h1>{{ machine_name | env_override("JOB_NAME") }}</h1>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                <ul class="nav navbar-nav">
+                  <li><a class="btn btn-default" href='{{ "undef" | env_override("JOB_URL") }}'>{{ "job_name" | env_override("JOB_NAME") }}</a></li>
+                  <li><a class="btn btn-default" href='{{ "undef" | env_override("BUILD_URL") }}'>Jenkins Build</a></li>
+                  <li><p class="navbar-text">{{ "undef" | env_override("STAGE_NAME") }}</p></li>
+                  <li><p class="navbar-text">Node name: {{ "undef" | env_override("NODE_NAME") }}</p></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="popup" id="imgsModal">
+    <div class="popupContent" id="imgsModalContent">
+        <form class="popupForm" oninput="thresholdView.value=parseFloat(thresholdRange.value)">
+            <button class="commonButton closePopup" type="button" name="closePopupButton" onclick="closeModalWindow('imgsModal');return false;"><img src="report_resources/img/close-button.png"/></button>
+            <button class="commonButton" type="button" name="increaseImgSizeButton" onclick="increaseImgSize();">Image Size +</button>
+            <button class="commonButton" type="button" name="reduceImgSizeButton" onclick="reduceImgSize();">Image Size -</button>
+            <button class="commonButton" type="button" name="showImgsSubstr" onclick="showImagesSubtraction('baselineImgPopup', 'renderedImgPopup', false);">Pixel comparison</button>
+            <button class="commonButton" type="button" name="showImgsSubstr" onclick="showImagesSubtraction('baselineImgPopup', 'renderedImgPopup', true);">Intelligent comparison</button>
+            <button class="commonButton" type="button" name="showCarouselButton" onclick="showCarousel('baselineImgPopup', 'renderedImgPopup');">Gif comparison</button>
+            <input  autocomplete="true" id="thresholdRange" type="range" name="thresholdSelector" min="0.0" max="1" step="0.01" value="0.03" oninput="renderCanvasData('baselineImgPopup', 'renderedImgPopup', 'imgsDifferenceCanvas', this.value);"/>
+            <output name="thresholdView" id="thresholdView" for="thresholdSelector">0.03</output>
+        </form>
+
+        <div id="pairComparisonDiv">
+            <table class="baseTable" id="imgsCompareTable">
+                <thead>
+                    <tr>
+                        <th>Baseline Image</th>
+                        <th>Rendered Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="hatching"><img src="" id="baselineImgPopup"/></td>
+                        <td class="hatching"><img src="" id="renderedImgPopup"/></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="baseTable" id="imgsDiffTable" style="display: none">
+            <thead>
+                <tr>
+                    <th>Difference Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="hatching" id="diffImageTd"><canvas id="imgsDifferenceCanvas"></canvas></td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div id="imagesCarousel" style="display: none">
+        <img id="imagesCarouselImg" src=""/>
+    </div>
+
+</div>
 
     <div class="jsTableWrapper">
         <table id="mainTable"
-               class="baseTable detailedTable"
+               class="detailedTable table table-hover"
                data-toggle="table"
                data-search="true"
                data-show-refresh="true"
@@ -49,13 +112,13 @@
                data-sort-name="test_case">
             <thead>
                 <tr>
-                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false" width="10px">Test case</th>
-                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName" width="100px">
+                    <th data-field="test_case" data-halign="center" data-valign="center" data-sortable="true" data-visible="false" data-width="200">Test case</th>
+                    <th data-field="test_case_copy" data-halign="center" data-valign="center" data-sortable="true" data-events="copyTestCaseName" data-width="300">
                         Test name
                         <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
                     </th>
-                    <th data-field="ref_img" data-halign="center" data-valign="center" data-sortable="true" data-formatter="metaAJAX">Reference image</th>
-                    <th data-field="out_img" data-halign="center" data-valign="center" data-sortable="true" data-formatter="metaAJAX">Output image</th>
+                    <th data-field="baseline_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Output image</th>
+                    <th data-field="rendered_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Reference image</th>
                     <th data-field="diff_img" data-halign="center" data-valign="center" data-sortable="true">Image delta</th>
                 </tr>
             </thead>
@@ -63,14 +126,15 @@
                 {% for case in cases_list %}
                 <tr>
                     <td>{{ case }}</td>
-                    <td><button class="commonButton" type="button" name="copyDirectLinkButton">{{ case }}</button></td>
-                    <td class="hatching" id="TRef{{ loop.index }}"><img id="Ref{{ loop.index }}" data-src="ReferenceImages/{{ case }}"/></td>
-                    <td class="hatching" id="TOut{{ loop.index }}"><img id="Out{{ loop.index }}" data-src="OutputImages/{{ case }}"/></td>
-                    <td class="hatching" id="TDiff{{ loop.index }}">
-                        <canvas id="Diff{{ loop.index }}"></canvas>
+                    <td>
+                        <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 200px; white-space: break-spaces; overflow-wrap: break-word;">{{ case }}</button>
+                    </td>
+                    <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case }}" id="Ref{{ loop.index }}"/></td>
+                    <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case }}" id="Out{{ loop.index }}"/></td>
+                    <td class="hatching" id="TDiff{{ loop.index }}"><canvas id="Diff{{ loop.index }}"></canvas>
 
-                        <form class="popupForm" oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
-                            <input  autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.0"
+                        <form oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
+                            <input autocomplete="true" id="thresholdRange{{ loop.index }}" type="range" name="thresholdSelector{{ loop.index }}" min="0.0" max="1" step="0.01" value="0.0"
                                     oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', this.value);"/>
                             <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.0</output>
                         </form>
@@ -86,11 +150,12 @@
         </table>
     </div>
 
-    <div id="footer">
-        Hybrid
-        <br>
-        2019
-    </div>
+<!--    <footer class="text-muted center-block">-->
+        <div id="footer" class="container-fluid center-block">
+            <p>Hybrid</p>
+            <p>2019-2020</p>
+        </div>
+<!--    </footer>-->
 
 </body>
 </html>
