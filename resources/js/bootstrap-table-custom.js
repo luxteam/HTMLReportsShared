@@ -27,6 +27,13 @@ function statusSorter(x, y) {
     return 1;
 }
 
+jQuery(document).ready( function() {
+    var searchText = getQueryVariable('searchText');
+    if (searchText) {
+        $('.jsTableWrapper [id]').bootstrapTable('resetSearch', searchText);
+    }
+});
+
 window.openFullImgSize = {
     'click img': function(e, value, row, index) {
         var renderImg = document.getElementById('renderedImgPopup');
