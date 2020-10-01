@@ -27,6 +27,13 @@ function statusSorter(x, y) {
     return 1;
 }
 
+jQuery(document).ready( function() {
+    var searchText = getQueryVariable('searchText');
+    if (searchText) {
+        $('.jsTableWrapper [id]').bootstrapTable('resetSearch', searchText);
+    }
+});
+
 window.openFullImgSize = {
     'click img': function(e, value, row, index) {
         var renderImg = document.getElementById('renderedImgPopup');
@@ -71,21 +78,27 @@ window.copyTestCaseName = {
 
         try {
             var node = document.createElement('input');
-            var current_url = window.location.href;
-            var url_parser = new URL(current_url);
-            if (url_parser.searchParams.get("searchText")) {
-                url_parser.searchParams.delete("searchText");
-            }
-            url_parser.searchParams.set("searchText", row.test_case);
 
-            // duct tape for clipboard correct work
-            node.setAttribute('value', url_parser.toString());
+            if (e.currentTarget.name === 'copyDirectLinkButton') {
+                var current_url = window.location.href;
+                var url_parser = new URL(current_url);
+                if (url_parser.searchParams.get("searchText")) {
+                    url_parser.searchParams.delete("searchText");
+                }
+                url_parser.searchParams.set("searchText", row.test_case);
+
+                // duct tape for clipboard correct work
+                node.setAttribute('value', url_parser.toString());
+            }
+            else {
+                node.setAttribute('value', row.test_case.split('.').slice(0, -1).join('.'));
+            }
             document.body.appendChild(node);
             node.select();
             document.execCommand('copy');
             node.remove();
             // popup with status for user
-            infoBox("Link copied to clipboard.")
+            infoBox("Copied to clipboard.")
         } catch(e) {
             infoBox("Can't copy to clipboard.")
         }

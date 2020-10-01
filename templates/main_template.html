@@ -127,7 +127,10 @@
                 <tr>
                     <td>{{ case }}</td>
                     <td>
-                        <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 200px; white-space: break-spaces; overflow-wrap: break-word;">{{ case }}</button>
+                        <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case }}</button>
+                        <br/>
+                        <br/>
+                        <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">[COPY URL TO TEST CASE]</button>
                     </td>
                     <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case }}" id="Ref{{ loop.index }}"/></td>
                     <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case }}" id="Out{{ loop.index }}"/></td>
