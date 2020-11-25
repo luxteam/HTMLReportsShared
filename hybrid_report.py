@@ -58,6 +58,11 @@ def main():
             if image not in images:
                 images.append(os.path.basename(image_path))
 
+    if args.compare_with_refs:
+        target_dirs = [ref_dir, out_dir]
+    else:
+        target_dirs = [out_dir]
+
     for suite in xml:
         for case in suite:
             if case.result:
@@ -66,10 +71,6 @@ def main():
                     if image.startswith(case.name):
                         cases_list.append(image)
                         image_found = True
-                        if args.compare_with_refs:
-                            target_dirs = [ref_dir, out_dir]
-                        else:
-                            target_dirs = [out_dir]
                         for target_dir in target_dirs:
                             source_img_path = os.path.join(args.images_basedir, target_dir, image)
                             report_img_path = os.path.join(args.report_path, target_dir, image)
@@ -81,6 +82,14 @@ def main():
                                 print(str(err))
                                 print(image)
                 if not image_found:
+                    for target_dir in target_dirs:
+                        source_img_path = os.path.join('resources', 'img', 'no-image.jpg')
+                        report_img_path = os.path.join(args.report_path, target_dir, case.name + '.png')
+                        try:
+                            copyfile(source_img_path, report_img_path)
+                        except OSError as err:
+                            print(str(err))
+                            print(case.name)
                     cases_list.append(case.name + '.png')
 
     env = jinja2.Environment(
