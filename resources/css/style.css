@@ -369,3 +369,7 @@ a {
     width: auto;
     height: 80vh;
 }
+
+.text {
+    white-space: pre-wrap !important;
+}

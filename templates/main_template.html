@@ -117,6 +117,7 @@
                         Test name
                         <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
                     </th>
+                    <th data-field="reason" data-halign="center" data-valign="center" data-sortable="true">Failure reason</th>
                     {% if compare_with_refs %}
                         <th data-field="baseline_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Reference image</th>
                         <th data-field="rendered_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Output image</th>
@@ -129,16 +130,17 @@
             <tbody>
                 {% for case in cases_list %}
                 <tr>
-                    <td>{{ case }}</td>
+                    <td>{{ case['name'] }}</td>
                     <td>
-                        <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case }}</button>
+                        <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case['name'] }}</button>
                         <br/>
                         <br/>
                         <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">[COPY URL TO TEST CASE]</button>
                     </td>
+                    <td class="text">{{ case['reason'] }}</td>
                     {% if compare_with_refs %}
-                        <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case }}" id="Ref{{ loop.index }}"/></td>
-                        <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case }}" id="Out{{ loop.index }}"/></td>
+                        <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case['name'] }}" id="Ref{{ loop.index }}"/></td>
+                        <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case['name'] }}" id="Out{{ loop.index }}"/></td>
                         <td class="hatching" id="TDiff{{ loop.index }}"><canvas id="Diff{{ loop.index }}"></canvas>
 
                             <form oninput="currentThresholdView{{ loop.index }}.value=parseFloat(thresholdRange{{ loop.index }}.value)">
@@ -153,7 +155,7 @@
                             </script>
                         </td>
                     {% else %}
-                        <td class="hatching" id="TDiff{{ loop.index }}"><img data-src="OutputImages/{{ case }}" id="Diff{{ loop.index }}"/></td>
+                        <td class="hatching" id="TDiff{{ loop.index }}"><img data-src="OutputImages/{{ case['name'] }}" id="Diff{{ loop.index }}"/></td>
                     {% endif %}
                 </tr>
                 {% endfor %}

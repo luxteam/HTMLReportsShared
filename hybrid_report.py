@@ -63,19 +63,28 @@ def main():
     else:
         target_dirs = [out_dir]
 
+    if 'Core' in args.tool_name:
+        missing_image_name = 'error.png'
+    else:
+        missing_image_name = 'no-image.png'
+
     for suite in xml:
         for case in suite:
             if case.result:
                 image_found = False
+                if case.result._elem.text:
+                    failure_reason = case.result._elem.text
+                else:
+                    failure_reason = 'Unknown'
                 for image in images:
                     if image.startswith(case.name):
-                        cases_list.append(image)
+                        cases_list.append({'name': case.name + '.png', 'reason': failure_reason})
                         image_found = True
                         for target_dir in target_dirs:
                             source_img_path = os.path.join(args.images_basedir, target_dir, image)
                             report_img_path = os.path.join(args.report_path, target_dir, image)
                             if not os.path.exists(source_img_path):
-                                source_img_path = os.path.join('resources', 'img', 'no-image.jpg')
+                                source_img_path = os.path.join('resources', 'img', missing_image_name)
                             try:
                                 copyfile(source_img_path, report_img_path)
                             except OSError as err:
@@ -83,14 +92,14 @@ def main():
                                 print(image)
                 if not image_found:
                     for target_dir in target_dirs:
-                        source_img_path = os.path.join('resources', 'img', 'no-image.jpg')
+                        source_img_path = os.path.join('resources', 'img', missing_image_name)
                         report_img_path = os.path.join(args.report_path, target_dir, case.name + '.png')
                         try:
                             copyfile(source_img_path, report_img_path)
                         except OSError as err:
                             print(str(err))
                             print(case.name)
-                    cases_list.append(case.name + '.png')
+                    cases_list.append({'name': case.name + '.png', 'reason': failure_reason})
 
     env = jinja2.Environment(
         loader=jinja2.PackageLoader('hybrid_report', 'templates'),
