@@ -117,12 +117,12 @@
                         Test name
                         <span class="glyphicon glyphicon-question-sign" aria-haspopup="true" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Button click copy direct test case link to clipboard"></span>
                     </th>
-                    <th data-field="reason" data-halign="center" data-valign="center" data-sortable="true">Failure reason</th>
                     {% if compare_with_refs %}
                         <th data-field="baseline_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Reference image</th>
                         <th data-field="rendered_img" data-halign="center" data-valign="center" data-sortable="true" data-events="openFullImgSize" data-formatter="metaAJAX">Output image</th>
                         <th data-field="diff_img" data-halign="center" data-valign="center" data-sortable="true">Image delta</th>
                     {% else %}
+                        <th data-field="reason" data-halign="center" data-valign="center" data-sortable="true">Failure reason</th>
                         <th data-field="diff_img" data-halign="center" data-valign="center" data-sortable="true" data-formatter="metaAJAX">Diff image</th>
                     {% endif %}
                 </tr>
@@ -137,7 +137,6 @@
                         <br/>
                         <button class="btn btn-default" type="button" name="copyDirectLinkButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">[COPY URL TO TEST CASE]</button>
                     </td>
-                    <td class="text">{{ case['reason'] }}</td>
                     {% if compare_with_refs %}
                         <td class="hatching" id="TRef{{ loop.index }}"><img data-src="ReferenceImages/{{ case['name'] }}" id="Ref{{ loop.index }}"/></td>
                         <td class="hatching" id="TOut{{ loop.index }}"><img data-src="OutputImages/{{ case['name'] }}" id="Out{{ loop.index }}"/></td>
@@ -155,6 +154,7 @@
                             </script>
                         </td>
                     {% else %}
+                        <td class="text">{{ case['reason'] }}</td>
                         <td class="hatching" id="TDiff{{ loop.index }}"><img data-src="OutputImages/{{ case['name'] }}" id="Diff{{ loop.index }}"/></td>
                     {% endif %}
                 </tr>
