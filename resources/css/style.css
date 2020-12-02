@@ -28,6 +28,11 @@ body {
   margin: 0;
   padding: 0;
 }
+.logo {
+  font-family: "AMDRTG";
+  font-size: 96px;
+  margin-left: 100px;
+}
 #header img{
   display: block;
   margin-right: auto;
@@ -363,4 +368,8 @@ a {
     max-height: 80vh;
     width: auto;
     height: 80vh;
+}
+
+.text {
+    white-space: pre-wrap !important;
 }

@@ -17,11 +17,27 @@ def main():
     parser.add_argument('--images_basedir', required=True)
     parser.add_argument('--report_path', default=os.path.join(os.path.dirname(__file__), 'FailuresReport'))
     parser.add_argument('--report_name', default='report.html')
+    parser.add_argument('--tool_name', default='Hybrid')
+    parser.add_argument('--compare_with_refs', default='True')
 
     args = parser.parse_args()
 
+    args.compare_with_refs = args.compare_with_refs == 'True'
+
     ref_dir = 'ReferenceImages'
     out_dir = 'OutputImages'
+
+    if 'Core' in args.tool_name:
+        missing_image_name = 'error.png'
+        image_prefix = '4xDiff_'
+    else:
+        missing_image_name = 'no-image.png'
+        image_prefix = ''
+
+    if args.compare_with_refs:
+        target_dirs = [ref_dir, out_dir]
+    else:
+        target_dirs = ['.']
 
     xml = JUnitXml.fromfile(args.xml_path)
     cases_list = []
@@ -40,10 +56,17 @@ def main():
         exit(-1)
 
     images = []
-    ref_images = set(glob(os.path.join(args.images_basedir, ref_dir, "*")))
-    out_images = set(glob(os.path.join(args.images_basedir, out_dir, "*")))
-    for images_paths in [ref_images, out_images]:
-        for image_path in images_paths:
+    if args.compare_with_refs:
+        out_images = set(glob(os.path.join(args.images_basedir, out_dir, "*")))
+        ref_images = set(glob(os.path.join(args.images_basedir, ref_dir, "*")))
+        for images_paths in [ref_images, out_images]:
+            for image_path in images_paths:
+                image = os.path.basename(image_path)
+                if image not in images:
+                    images.append(os.path.basename(image_path))
+    else:
+        out_images = set(glob(os.path.join(args.images_basedir, "*")))
+        for image_path in out_images:
             image = os.path.basename(image_path)
             if image not in images:
                 images.append(os.path.basename(image_path))
@@ -52,22 +75,38 @@ def main():
         for case in suite:
             if case.result:
                 image_found = False
+                if case.result._elem.text:
+                    failure_reason = case.result._elem.text
+                else:
+                    failure_reason = 'Unknown'
                 for image in images:
-                    if image.startswith(case.name):
-                        cases_list.append(image)
+                    if image.startswith(image_prefix + case.name):
+                        cases_list.append({'name': image, 'reason': failure_reason})
                         image_found = True
-                        for target_dir in [ref_dir, out_dir]:
+                        for target_dir in target_dirs:
                             source_img_path = os.path.join(args.images_basedir, target_dir, image)
-                            report_img_path = os.path.join(args.report_path, target_dir, image)
                             if not os.path.exists(source_img_path):
-                                source_img_path = os.path.join('resources', 'img', 'no-image.jpg')
+                                source_img_path = os.path.join('resources', 'img', missing_image_name)
+                            # save images not in root of dir with html report
+                            dir_to_save = out_dir if target_dir == '.' else target_dir
+                            report_img_path = os.path.join(args.report_path, dir_to_save, image)
                             try:
                                 copyfile(source_img_path, report_img_path)
                             except OSError as err:
                                 print(str(err))
                                 print(image)
                 if not image_found:
-                    cases_list.append(image)
+                    for target_dir in target_dirs:
+                        source_img_path = os.path.join('resources', 'img', missing_image_name)
+                        # save images not in root of dir with html report
+                        dir_to_save = out_dir if target_dir == '.' else target_dir
+                        report_img_path = os.path.join(args.report_path, dir_to_save, case.name + '.png')
+                        try:
+                            copyfile(source_img_path, report_img_path)
+                        except OSError as err:
+                            print(str(err))
+                            print(case.name)
+                    cases_list.append({'name': case.name + '.png', 'reason': failure_reason})
 
     env = jinja2.Environment(
         loader=jinja2.PackageLoader('hybrid_report', 'templates'),
@@ -77,7 +116,9 @@ def main():
     template = env.get_template('main_template.html')
 
     html_result = template.render(title="Title",
-                                  cases_list=cases_list)
+                                  cases_list=cases_list,
+                                  tool_name=args.tool_name,
+                                  compare_with_refs=args.compare_with_refs)
 
     with open(os.path.join(args.report_path, args.report_name), 'w') as html_file:
         html_file.write(html_result)
