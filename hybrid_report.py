@@ -27,6 +27,18 @@ def main():
     ref_dir = 'ReferenceImages'
     out_dir = 'OutputImages'
 
+    if 'Core' in args.tool_name:
+        missing_image_name = 'error.png'
+        image_prefix = '4xDiff_'
+    else:
+        missing_image_name = 'no-image.png'
+        image_prefix = ''
+
+    if args.compare_with_refs:
+        target_dirs = [ref_dir, out_dir]
+    else:
+        target_dirs = ['.']
+
     xml = JUnitXml.fromfile(args.xml_path)
     cases_list = []
 
@@ -44,8 +56,8 @@ def main():
         exit(-1)
 
     images = []
-    out_images = set(glob(os.path.join(args.images_basedir, out_dir, "*")))
     if args.compare_with_refs:
+        out_images = set(glob(os.path.join(args.images_basedir, out_dir, "*")))
         ref_images = set(glob(os.path.join(args.images_basedir, ref_dir, "*")))
         for images_paths in [ref_images, out_images]:
             for image_path in images_paths:
@@ -53,22 +65,11 @@ def main():
                 if image not in images:
                     images.append(os.path.basename(image_path))
     else:
+        out_images = set(glob(os.path.join(args.images_basedir, "*")))
         for image_path in out_images:
             image = os.path.basename(image_path)
             if image not in images:
                 images.append(os.path.basename(image_path))
-
-    if args.compare_with_refs:
-        target_dirs = [ref_dir, out_dir]
-    else:
-        target_dirs = [out_dir]
-
-    if 'Core' in args.tool_name:
-        missing_image_name = 'error.png'
-        image_prefix = '4xDiff_'
-    else:
-        missing_image_name = 'no-image.png'
-        image_prefix = ''
 
     for suite in xml:
         for case in suite:
@@ -83,10 +84,12 @@ def main():
                         cases_list.append({'name': image, 'reason': failure_reason})
                         image_found = True
                         for target_dir in target_dirs:
-                            source_img_path = os.path.join(args.images_basedir, target_dir, image_prefix + image)
-                            report_img_path = os.path.join(args.report_path, target_dir, image)
+                            source_img_path = os.path.join(args.images_basedir, target_dir, image)
                             if not os.path.exists(source_img_path):
                                 source_img_path = os.path.join('resources', 'img', missing_image_name)
+                            # save images not in root of dir with html report
+                            dir_to_save = out_dir if target_dir == '.' else target_dir
+                            report_img_path = os.path.join(args.report_path, dir_to_save, image)
                             try:
                                 copyfile(source_img_path, report_img_path)
                             except OSError as err:
@@ -95,7 +98,9 @@ def main():
                 if not image_found:
                     for target_dir in target_dirs:
                         source_img_path = os.path.join('resources', 'img', missing_image_name)
-                        report_img_path = os.path.join(args.report_path, target_dir, case.name + '.png')
+                        # save images not in root of dir with html report
+                        dir_to_save = out_dir if target_dir == '.' else target_dir
+                        report_img_path = os.path.join(args.report_path, dir_to_save, case.name + '.png')
                         try:
                             copyfile(source_img_path, report_img_path)
                         except OSError as err:
