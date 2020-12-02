@@ -65,8 +65,10 @@ def main():
 
     if 'Core' in args.tool_name:
         missing_image_name = 'error.png'
+        image_prefix = '4xDiff_'
     else:
         missing_image_name = 'no-image.png'
+        image_prefix = ''
 
     for suite in xml:
         for case in suite:
@@ -77,11 +79,11 @@ def main():
                 else:
                     failure_reason = 'Unknown'
                 for image in images:
-                    if image.startswith(case.name):
-                        cases_list.append({'name': case.name + '.png', 'reason': failure_reason})
+                    if image.startswith(image_prefix + case.name):
+                        cases_list.append({'name': image, 'reason': failure_reason})
                         image_found = True
                         for target_dir in target_dirs:
-                            source_img_path = os.path.join(args.images_basedir, target_dir, image)
+                            source_img_path = os.path.join(args.images_basedir, target_dir, image_prefix + image)
                             report_img_path = os.path.join(args.report_path, target_dir, image)
                             if not os.path.exists(source_img_path):
                                 source_img_path = os.path.join('resources', 'img', missing_image_name)
