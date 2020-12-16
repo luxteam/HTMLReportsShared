@@ -80,6 +80,7 @@ async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdVal
     let diff = ctx.createImageData(width, height);
     pixelmatch(imgData1.data, imgData2.data, diff.data, width, height, {threshold: this.thresholdValue});
     ctx.putImageData(diff, 0, 0);
+    console.log("Done")
 }
 
 function renderCanvasReshalla(baselineId, renderId) {
