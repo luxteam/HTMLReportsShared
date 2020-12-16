@@ -169,16 +169,12 @@
 </html>
 
 <script>
-    let table = $('#mainTable')[0];
-    let rows = [...table.rows];
-    let order = rows.map(row => +row.id.replace("TRow")).filter(row => !isNaN(row));
-    console.log({orderLen: order.length})
-
     $(document).ready(function() {
-        order.forEach(index => {
+        for (var i = 1; i <= {{ products|length }} ; i++) {
+            let index = i;
             setTimeout(function () {
                 renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
             }, 100);
-        });
+        }
     })
 </script>
