@@ -63,13 +63,8 @@ async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdVal
     await waitImageLoading(baselineImg);
     await waitImageLoading(renderedImg);
 
-    var width1 = renderedImg.naturalWidth || renderedImg.width;
-    var width2 = baselineImg.naturalWidth || baselineImg.width;
-    let width = Math.max(width1, width2);
-
-    var height1 = renderedImg.naturalHeight || renderedImg.height;
-    var height2 = baselineImg.naturalHeight || baselineImg.height;
-    let height = Math.max(height1, height2);
+    let width = baselineImg.naturalWidth || baselineImg.width;
+    let height = baselineImg.naturalHeight || baselineImg.height;
 
     diffCanvas.width = width;
     diffCanvas.height = height;
