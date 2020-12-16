@@ -170,7 +170,7 @@
 
 <script>
     $(document).ready(function() {
-        for (var i = 1; i <= {{ products|length }} ; i++) {
+        for (var i = 1; i <= {{ cases_list|length }} ; i++) {
             let index = i;
             setTimeout(function () {
                 renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
