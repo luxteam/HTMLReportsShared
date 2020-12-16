@@ -129,7 +129,7 @@
             </thead>
             <tbody>
                 {% for case in cases_list %}
-                <tr key-number-original-order="{{ loop.index }}">
+                <tr data-unique-id="{{ loop.index }}">
                     <td>{{ case['name'] }}</td>
                     <td>
                         <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case['name'] }}</button>
@@ -169,17 +169,32 @@
 </html>
 
 <script>
-    setTimeout(function () {
-        let table = $('#mainTable');
-        let rows = [...table[0].rows];
-        rows = rows.map( row => +row["key-number-original-order"] ).filter(row => !isNaN(row));
+    $(document).ready(function() {
+        let fullLen = {{ cases_list|length }};
 
-        $(document).ready(function() {
-            rows.forEach(index => {
+        setTimeout(function () {
+            let table = $('#mainTable');
+            let rows = [...table[0].rows];
+
+            rows = rows
+                    .map( row => row.attributes["data-unique-id"] )
+                    .filter( row => !!row )
+                    .map( row => +row.value )
+                    .filter( row => !isNaN(row) );
+
+            rows.forEach((row, i) => {
                 setTimeout(function () {
-                    renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
-                }, 100);
+                    renderCanvasData(`Ref${row}`, `Out${row}`, `Diff${row}`, 0.0);
+                }, 10 * i);
             });
-        });
-    }, 200);
+
+            // for rows that was not find in rows (does not execute usually)
+            for (var i = 0; i < fullLen; i++) {
+                if (rows.indexOf(i) > -1) continue;
+                setTimeout(function () {
+                    renderCanvasData(`Ref${i}`, `Out${i}`, `Diff${i}`, 0.0);
+                }, 10 * i);
+            }
+        }, 100);
+    });
 </script>
