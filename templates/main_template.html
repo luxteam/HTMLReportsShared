@@ -129,7 +129,7 @@
             </thead>
             <tbody>
                 {% for case in cases_list %}
-                <tr>
+                <tr id="TRow{{ loop.index }}">
                     <td>{{ case['name'] }}</td>
                     <td>
                         <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case['name'] }}</button>
@@ -147,11 +147,6 @@
                                         oninput="renderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', this.value);"/>
                                 <output for="thresholdSelector{{ loop.index }}" name="currentThresholdView{{ loop.index }}">0.0</output>
                             </form>
-                            <script>
-                                window.setTimeout( function(){
-                                    waitImgLoadAndRenderCanvasData('Ref{{ loop.index }}', 'Out{{ loop.index }}', 'Diff{{ loop.index }}', 0.0);
-                                }, 100* {{ loop.index }} );
-                            </script>
                         </td>
                     {% else %}
                         <td class="text">{{ case['reason'] }}</td>
@@ -172,3 +167,17 @@
 
 </body>
 </html>
+
+<script>
+    let table = $('#mainTable')[0];
+    let rows = table.rows;
+    let order = rows.map(row => +row.id.replace("TRow"));
+
+    $(document).ready(function() {
+        order.forEach(index => {
+            setTimeout(function () {
+                renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
+            }, 100);
+        });
+    })
+</script>

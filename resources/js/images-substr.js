@@ -40,26 +40,50 @@ function showImagesSubtraction(baselineId, renderId, reshalla) {
     diffTable.is_reshalla = reshalla;
 }
 
-function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
+function waitImageLoading(img) {
+    return new Promise(resolve => {
+        console.log({wait_for_image: img});
+        if (img.complete) {
+            resolve();
+        } else {
+            img.addEventListener("load", () => {
+                console.log({imgLoaded: img});
+                resolve()
+            });
+        }
+    })
+}
+
+async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
     document.getElementById('thresholdRange').setAttribute("value", thresholdValue);
+    var baselineImg = document.getElementById(baselineId);
+    var renderedImg = document.getElementById(renderId);
     var diffCanvas = document.getElementById(diffCanvasId);
 
-    var img1 = document.getElementById(baselineId);
-    var img2 = document.getElementById(renderId);
+    await waitImageLoading(baselineImg);
+    await waitImageLoading(renderedImg);
 
-    diffCanvas.width = img1.naturalWidth;
-    diffCanvas.height = img1.naturalHeight;
+    var width1 = renderedImg.naturalWidth || renderedImg.width;
+    var width2 = baselineImg.naturalWidth || baselineImg.width;
+    let width = Math.max(width1, width2);
 
-    var ctx = diffCanvas.getContext("2d");
-    ctx.clearRect(0, 0, diffCanvas.width, diffCanvas.height);
+    var height1 = renderedImg.naturalHeight || renderedImg.height;
+    var height2 = baselineImg.naturalHeight || baselineImg.height;
+    let height = Math.max(height1, height2);
 
-    ctx.drawImage(img1, 0, 0);
-    var imgData1 = ctx.getImageData(0, 0, diffCanvas.width, diffCanvas.height);
-    ctx.drawImage(img2, 0, 0);
-    var imgData2 = ctx.getImageData(0, 0, diffCanvas.width, diffCanvas.height);
+    diffCanvas.width = width;
+    diffCanvas.height = height;
 
-    var diff = ctx.createImageData(diffCanvas.width, diffCanvas.height);
-    pixelmatch(imgData1.data, imgData2.data, diff.data, diffCanvas.width, diffCanvas.height, {threshold: thresholdValue});
+    let ctx = diffCanvas.getContext("2d");
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.drawImage(baselineImg, 0, 0);
+    let imgData1 = ctx.getImageData(0, 0, width, height);
+    ctx.drawImage(renderedImg, 0, 0);
+    let imgData2 = ctx.getImageData(0, 0, width, height);
+
+    let diff = ctx.createImageData(width, height);
+    pixelmatch(imgData1.data, imgData2.data, diff.data, width, height, {threshold: this.thresholdValue});
     ctx.putImageData(diff, 0, 0);
 }
 
@@ -146,22 +170,4 @@ function showCarousel(baselineId, renderId) {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function waitImgLoadAndRenderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue) {
-    var loaded = false;
-    var i = 0;
-    while(i < 1000) {
-        console.log(document.getElementById(baselineId).complete && document.getElementById(renderId).complete);
-        if (document.getElementById(baselineId).complete && document.getElementById(renderId).complete) {
-            console.log("Imgs loaded");
-            renderCanvasData(baselineId, renderId, diffCanvasId, thresholdValue);
-            return;
-        }
-        else {
-            i++;
-            await sleep(1000);
-            console.log("Imgs not loaded");
-        }
-    }
 }
