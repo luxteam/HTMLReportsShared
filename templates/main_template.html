@@ -129,7 +129,7 @@
             </thead>
             <tbody>
                 {% for case in cases_list %}
-                <tr id="TRow{{ loop.index }}">
+                <tr key-number-original-order="{{ loop.index }}">
                     <td>{{ case['name'] }}</td>
                     <td>
                         <button class="btn btn-default" type="button" name="copyTestCaseNameButton" style="max-width: 15vw; margin: auto; display: block; white-space: break-spaces; overflow-wrap: break-word;">{{ case['name'] }}</button>
@@ -169,12 +169,17 @@
 </html>
 
 <script>
-    $(document).ready(function() {
-        for (var i = 1; i <= {{ cases_list|length }} ; i++) {
-            let index = i;
-            setTimeout(function () {
-                renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
-            }, 100);
-        }
-    })
+    setTimeout(function () {
+        let table = $('#mainTable');
+        let rows = [...table[0].rows];
+        rows = rows.map( row => +row["key-number-original-order"] ).filter(row => !isNaN(row));
+
+        $(document).ready(function() {
+            rows.forEach(index => {
+                setTimeout(function () {
+                    renderCanvasData(`Ref${index}`, `Out${index}`, `Diff${index}`, 0.0)
+                }, 100);
+            });
+        });
+    }, 200);
 </script>
