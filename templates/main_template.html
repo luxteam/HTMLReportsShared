@@ -170,8 +170,9 @@
 
 <script>
     let table = $('#mainTable')[0];
-    let rows = table.rows;
-    let order = rows.map(row => +row.id.replace("TRow"));
+    let rows = [...table.rows];
+    let order = rows.map(row => +row.id.replace("TRow")).filter(row => !isNaN(row));
+    console.log({orderLen: order.length})
 
     $(document).ready(function() {
         order.forEach(index => {
