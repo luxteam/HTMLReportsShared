@@ -58,6 +58,8 @@ async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdVal
     var renderedImg = document.getElementById(renderId);
     var diffCanvas = document.getElementById(diffCanvasId);
 
+    if (!baselineImg | !renderedImg) return;
+
     await waitImageLoading(baselineImg);
     await waitImageLoading(renderedImg);
 

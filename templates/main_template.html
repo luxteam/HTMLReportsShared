@@ -105,8 +105,8 @@
                data-show-toggle="false"
                data-show-columns="true"
                data-show-pagination-switch="true"
-               data-pagination="false"
-               data-page-size="5"
+               data-pagination="true"
+               data-page-size="10"
                data-page-list="[1, 5, 10, 20, 45, ALL]"
                data-sort-order="asc"
                data-sort-name="test_case">
@@ -169,32 +169,29 @@
 </html>
 
 <script>
-    $(document).ready(function() {
-        let fullLen = {{ cases_list|length }};
+    function setDiffImages() {
+        let table = $('#mainTable');
+        let rows = [...table[0].rows];
 
-        setTimeout(function () {
-            let table = $('#mainTable');
-            let rows = [...table[0].rows];
+        rows = rows
+                .map( row => row.attributes["data-unique-id"] )
+                .filter( row => !!row )
+                .map( row => +row.value )
+                .filter( row => !isNaN(row) );
 
-            rows = rows
-                    .map( row => row.attributes["data-unique-id"] )
-                    .filter( row => !!row )
-                    .map( row => +row.value )
-                    .filter( row => !isNaN(row) );
+        rows.forEach((row, i) => {
+            setTimeout(function () {
+                renderCanvasData(`Ref${row}`, `Out${row}`, `Diff${row}`, 0.0);
+            }, 10 * i);
+        });
+    }
 
-            rows.forEach((row, i) => {
-                setTimeout(function () {
-                    renderCanvasData(`Ref${row}`, `Out${row}`, `Diff${row}`, 0.0);
-                }, 10 * i);
-            });
+   $(document).ready(function() {
+        setTimeout(setDiffImages, 100);
 
-            // for rows that was not find in rows (does not execute usually)
-            for (var i = 0; i < fullLen; i++) {
-                if (rows.indexOf(i) > -1) continue;
-                setTimeout(function () {
-                    renderCanvasData(`Ref${i}`, `Out${i}`, `Diff${i}`, 0.0);
-                }, 10 * i);
-            }
-        }, 100);
+        let table = $('#mainTable');
+        table.on("page-change.bs.table", () => {
+            setTimeout(setDiffImages, 50);
+        });
     });
 </script>
