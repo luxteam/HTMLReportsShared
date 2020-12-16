@@ -42,12 +42,10 @@ function showImagesSubtraction(baselineId, renderId, reshalla) {
 
 function waitImageLoading(img) {
     return new Promise(resolve => {
-        console.log({wait_for_image: img});
         if (img.complete) {
             resolve();
         } else {
             img.addEventListener("load", () => {
-                console.log({imgLoaded: img});
                 resolve()
             });
         }
@@ -80,7 +78,6 @@ async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdVal
     let diff = ctx.createImageData(width, height);
     pixelmatch(imgData1.data, imgData2.data, diff.data, width, height, {threshold: this.thresholdValue});
     ctx.putImageData(diff, 0, 0);
-    console.log("Done")
 }
 
 function renderCanvasReshalla(baselineId, renderId) {
