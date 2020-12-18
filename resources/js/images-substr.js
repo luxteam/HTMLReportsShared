@@ -78,7 +78,7 @@ async function renderCanvasData(baselineId, renderId, diffCanvasId, thresholdVal
     let imgData2 = ctx.getImageData(0, 0, width, height);
 
     let diff = ctx.createImageData(width, height);
-    pixelmatch(imgData1.data, imgData2.data, diff.data, width, height, {threshold: this.thresholdValue});
+    pixelmatch(imgData1.data, imgData2.data, diff.data, width, height, {threshold: thresholdValue});
     ctx.putImageData(diff, 0, 0);
 }
 
