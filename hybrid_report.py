@@ -101,11 +101,13 @@ def main():
                     image_found = True
                     img_name = case.result.message.splitlines()[-1]
                     if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
-                        cases_list.append(case.name + img_name)
+                        cases_list.append({'name': case.name + img_name, 'reason': failure_reason})
                     else:
-                        cases_list.append(img_name)
+                        cases_list.append({'name': img_name, 'reason': failure_reason})
                         for target_dir in [ref_dir, out_dir]:
                             source_img_path = os.path.join(args.images_basedir, target_dir, img_name)
+                            if not os.path.exists(source_img_path):
+                                    source_img_path = os.path.join('resources', 'img', missing_image_name)
                             report_img_path = os.path.join(args.report_path, target_dir, img_name)
                             if os.path.exists(source_img_path):
                                 try:
