@@ -1,10 +1,10 @@
-from junitparser import *
 import argparse
 from shutil import copyfile, copytree
 import os
 import jinja2
 import time
 from glob import glob
+import junitparser
 
 
 def env_override(value, key):
