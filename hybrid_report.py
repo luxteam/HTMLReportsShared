@@ -1,10 +1,10 @@
-from junitparser import *
 import argparse
 from shutil import copyfile, copytree
 import os
 import jinja2
 import time
 from glob import glob
+import junitparser2
 
 
 def env_override(value, key):
@@ -39,7 +39,7 @@ def main():
     else:
         target_dirs = ['.']
 
-    xml = JUnitXml.fromfile(args.xml_path)
+    xml = junitparser2.JUnitXml.fromfile(args.xml_path)
     cases_list = []
 
     try:
@@ -76,11 +76,15 @@ def main():
         for case in suite:
             if case.result:
                 image_found = False
-                if case.result._elem.text:
-                    failure_reason = case.result._elem.text
-                else:
-                    failure_reason = 'Unknown'
                 if not 'Hybrid' in args.tool_name:
+                    # case.result is a list
+                    # in Core we have only one image and failure reason per test
+                    # Core generate only diff images so we take all images
+                    try:
+                        failure_reason = case.result[0]._elem.text
+                    except:
+                        failure_reason = "Unknown reason"
+
                     for image in images:
                         if image.startswith(image_prefix + case.name):
                             cases_list.append({'name': image, 'reason': failure_reason})
@@ -97,24 +101,31 @@ def main():
                                 except OSError as err:
                                     print(str(err))
                                     print(image)
-                else:       
+                else:   
+                    # Take images from failure reasons 
+                    # In Hybrid we can have multiple images for one case    
                     image_found = True
-                    img_name = case.result.message.splitlines()[-1]
-                    if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
-                        cases_list.append({'name': case.name + img_name, 'reason': failure_reason})
-                    else:
-                        cases_list.append({'name': img_name, 'reason': failure_reason})
-                        for target_dir in [ref_dir, out_dir]:
-                            source_img_path = os.path.join(args.images_basedir, target_dir, img_name)
-                            if not os.path.exists(source_img_path):
-                                    source_img_path = os.path.join('resources', 'img', missing_image_name)
-                            report_img_path = os.path.join(args.report_path, target_dir, img_name)
-                            if os.path.exists(source_img_path):
-                                try:
-                                    copyfile(source_img_path, report_img_path)
-                                except OSError as err:
-                                    print(str(err))
-                                    print(img_name)
+                    for result in case.result:
+                        try:
+                            failure_reason = result._elem.text
+                        except:
+                            failure_reason = "Unknown reason"
+                        img_name = result.message.splitlines()[-1]
+                        if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
+                            cases_list.append({'name': case.name + img_name, 'reason': failure_reason})
+                        else:
+                            cases_list.append({'name': img_name, 'reason': failure_reason})
+                            for target_dir in [ref_dir, out_dir]:
+                                source_img_path = os.path.join(args.images_basedir, target_dir, img_name)
+                                if not os.path.exists(source_img_path):
+                                        source_img_path = os.path.join('resources', 'img', missing_image_name)
+                                report_img_path = os.path.join(args.report_path, target_dir, img_name)
+                                if os.path.exists(source_img_path):
+                                    try:
+                                        copyfile(source_img_path, report_img_path)
+                                    except OSError as err:
+                                        print(str(err))
+                                        print(img_name)
                 if not image_found:
                     for target_dir in target_dirs:
                         source_img_path = os.path.join('resources', 'img', missing_image_name)
