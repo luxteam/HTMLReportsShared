@@ -106,6 +106,10 @@ def main():
                     # In Hybrid we can have multiple images for one case    
                     image_found = True
                     for result in case.result:
+                        try:
+                            failure_reason = result._elem.text
+                        except:
+                            failure_reason = "Unknown reason"
                         img_name = result.message.splitlines()[-1]
                         if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
                             cases_list.append({'name': case.name + img_name, 'reason': failure_reason})
