@@ -54,6 +54,10 @@ def main():
                 for status in current_report["summary"]:
                     current_platform["summary"][status] += current_report["summary"][status]
 
+    # save json report
+    with open(os.path.join(args.report_path, "performace_report.json"), "w", encoding="utf8") as file:
+        json.dump(metrics_list, file, indent=4, sort_keys=True)
+
     env = jinja2.Environment(
         loader=jinja2.PackageLoader('hybrid_report', 'templates'),
         autoescape=True
