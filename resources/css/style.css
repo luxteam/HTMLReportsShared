@@ -392,6 +392,10 @@ th, td {
     border: 1px solid black !important;
 }
 
+.infoColumn {
+    text-align: left;
+}
+
 .table-col-1 {
     width: 8.33%;
 }
