@@ -33,6 +33,20 @@ body {
   font-size: 96px;
   margin-left: 100px;
 }
+.logo-small {
+  font-family: "AMDRTG";
+  font-size: 48px;
+  margin-left: 100px;
+}
+.errorStatus {
+  background: #e86755 !important;
+}
+.warningStatus {
+  background: #fffacd !important;
+}
+.passedStatus {
+  background: #d3ffe4 !important;
+}
 #header img{
   display: block;
   margin-right: auto;
@@ -83,7 +97,7 @@ body {
 
 table.baseTable {
   border-collapse: collapse;
-  font-family: 'Helvetica, Arial, sans-serif';
+  font-family: "Open Sans";
   font-size: 14px;
   font-style: normal;
   text-align: center;
@@ -372,4 +386,32 @@ a {
 
 .text {
     white-space: pre-wrap !important;
+}
+
+th, td {
+    border: 1px solid black !important;
+}
+
+.table-col-1 {
+    width: 8.33%;
+}
+
+.table-col-2 {
+    width: 16.66%;
+}
+
+.table-col-3 {
+    width: 25%;
+}
+
+.table-col-4 {
+    width: 33.33%;
+}
+
+.table-col-5 {
+    width: 41.66%;
+}
+
+.table-col-6 {
+    width: 50%;
 }
