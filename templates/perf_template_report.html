@@ -66,6 +66,7 @@
                     <th data-field="info" data-halign="center" data-valign="middle" data-sortable="true" class="infoColumn">Metric info</th>
                     <th data-field="status" data-halign="center" data-valign="middle" data-sortable="true">Status</th>
                     <th data-field="reference_value" data-halign="center" data-valign="middle" data-sortable="true">Reference value</th>
+                    <th data-field="performance_change" data-halign="center" data-valign="middle" data-sortable="true">Performance change</th>
                     <th data-field="target_value" data-halign="center" data-valign="middle" data-sortable="true">Target value</th>
                     <th data-field="reference_value_sample_taken" data-halign="center" data-valign="middle" data-sortable="true">Reference value samples taken</th>
                     <th data-field="target_value_sample_taken" data-halign="center" data-valign="middle" data-sortable="true">Target value samples taken</th>
@@ -84,6 +85,7 @@
                         <b>Deviation threshold:</b> {{ value.Description.deviation_threshold }}<br/>
                     </td>
                     <td class="{{ value.status }}Status">{{ value.status[0] | upper }}{{ value.status[1:] }}</td>
+                    <td>{{ value.Performance_change }}</td>
                     <td>{{ value.Reference_value | round(3) }} {{ value.Description.unit }}</td>
                     <td>{{ value.Target_value | round(3) }} {{ value.Description.unit }}</td>
                     <td>{{ value.Reference_value_samples_taken }}</td>
