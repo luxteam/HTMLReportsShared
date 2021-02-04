@@ -24,7 +24,7 @@ def main():
     platforms = set(glob(os.path.join(args.json_files_path, "*")))
     # go through platforms
     for platform_path in platforms:
-        current_platform = {"reports": {}, "summary": {"passed": 0, "warning": 0, "error": 0, "total": 0}}
+        current_platform = {"reports": {}, "summary": {"passed": 0, "unexpected_acceleration": 0, "cliff_detected": 0, "total": 0}}
         # formatted platform name which will be displayed in report
         platform_name = os.path.split(platform_path)[1].replace("_", " ").replace("-", " (") + ")"
         current_platform["name"] = platform_name
@@ -35,16 +35,16 @@ def main():
             with open(report) as file:
                 metrics = json.load(file)
                 report_name = os.path.split(report)[1].replace("_", " ").replace(".json", "").replace(r"^Report", "")
-                current_report = {"name": report_name, "metrics": {}, "summary": {"passed": 0, "warning": 0, "error": 0, "total": 0}}
+                current_report = {"name": report_name, "metrics": {}, "summary": {"passed": 0, "unexpected_acceleration": 0, "cliff_detected": 0, "total": 0}}
                 current_platform["reports"][os.path.split(report)[1].replace(".json", "")] = current_report
                 for metric in metrics:
                     current_report["metrics"][metric] = metrics[metric]
                     # Presence of 'Cliff detected' field means that metric contains error
                     if "Cliff_detected" in metrics[metric] and metrics[metric]["Cliff_detected"]:
-                        status = "error"
+                        status = "cliff_detected"
                     # Presence of 'Unexpected acceleration' field means that metric contains warning
                     elif "Unexpected_acceleration" in metrics[metric] and metrics[metric]["Unexpected_acceleration"]:
-                        status = "warning"
+                        status = "unexpected_acceleration"
                     else:
                         status = "passed"
                     current_report["metrics"][metric]["status"] = status

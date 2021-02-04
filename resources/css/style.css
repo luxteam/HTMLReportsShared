@@ -38,10 +38,10 @@ body {
   font-size: 48px;
   margin-left: 100px;
 }
-.errorStatus {
+.cliff_detectedStatus {
   background: #e86755 !important;
 }
-.warningStatus {
+.unexpected_accelerationStatus {
   background: #fffacd !important;
 }
 .passedStatus {
