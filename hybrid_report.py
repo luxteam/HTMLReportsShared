@@ -111,9 +111,13 @@ def main():
                         except:
                             failure_reason = "Unknown reason"
                         img_name = result.message.splitlines()[-1]
-                        if not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
+                        # check that image name is name of image (Not just a sentence of error message)
+                        # + check that image doesn't exist in refs and output dirs (it means that name of target image is case name + img_name)
+                        if " " not in img_name and not os.path.exists(os.path.join(args.images_basedir, ref_dir, img_name)) and not os.path.exists(os.path.join(args.images_basedir, out_dir, img_name)):
                             cases_list.append({'name': case.name + img_name, 'reason': failure_reason})
                         else:
+                            if " " in img_name:
+                                img_name = case.name
                             cases_list.append({'name': img_name, 'reason': failure_reason})
                             for target_dir in [ref_dir, out_dir]:
                                 source_img_path = os.path.join(args.images_basedir, target_dir, img_name)
