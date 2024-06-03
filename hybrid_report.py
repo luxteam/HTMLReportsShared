@@ -74,7 +74,8 @@ def main():
 
     for suite in xml:
         for case in suite:
-            if case.result:
+            # ignore skipped test cases
+            if case.result and case.result[0]._elem.tag != "skipped":
                 image_found = False
                 if not 'Hybrid' in args.tool_name:
                     # case.result is a list
